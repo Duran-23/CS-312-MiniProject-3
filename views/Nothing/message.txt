@@ -1,0 +1,2 @@
+This is just to prevent the views folder to compresses with partials folder
+    which makes it look wierd, and hate.

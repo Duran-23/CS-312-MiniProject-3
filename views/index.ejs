@@ -1,0 +1,79 @@
+<%- include('partials/header') %>
+
+<div class="row">
+  <div class="col-md-5 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Create New Post</h5>
+      </div>
+      <div class="card-body">
+        <form action="/posts" method="POST">
+          <div class="mb-3">
+            <label for="author" class="form-label">Creator Name</label>
+            <input type="text" class="form-control" id="author" name="author" required>
+          </div>
+          <div class="mb-3">
+            <label for="title" class="form-label">Blog Title</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category" required>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat %>"><%= cat %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="content" class="form-label">Blog Content</label>
+            <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Publish Post</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Blog Posts</h4>
+      <form action="/" method="GET" class="d-flex align-items-center">
+        <label for="categoryFilter" class="me-2 fw-semibold">Filter:</label>
+        <select id="categoryFilter" name="category" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="All" <%= currentCategory === 'All' ? 'selected' : '' %>>All Categories</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat %>" <%= currentCategory === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }) %>
+        </select>
+      </form>
+    </div>
+
+    <% if (posts.length === 0) { %>
+      <div class="alert alert-info text-center">No posts found in this category.</div>
+    <% } else { %>
+      <% posts.forEach(post => { %>
+        <div class="card mb-3 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <h5 class="card-title text-primary"><%= post.title %></h5>
+              <span class="badge bg-secondary"><%= post.category %></span>
+            </div>
+            <h6 class="card-subtitle mb-2 text-muted">
+              By <%= post.author %> | <small><%= post.createdAt %></small>
+            </h6>
+            <p class="card-text"><%= post.content %></p>
+            
+            <div class="d-flex justify-content-end gap-2 border-top pt-2">
+              <a href="/posts/<%= post.id %>/edit" class="btn btn-sm btn-outline-warning">Edit</a>
+              <form action="/posts/<%= post.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this post?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

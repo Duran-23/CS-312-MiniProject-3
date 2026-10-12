@@ -1,0 +1,18 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #023223;
+}
+
+.card {
+  border-radius: 8px;
+}
+
+.card-title {
+  word-break: break-word;
+}
+
+.card-text {
+  white-space: pre-wrap;
+}
