@@ -7,29 +7,37 @@
         <h5 class="card-title mb-0">Create New Post</h5>
       </div>
       <div class="card-body">
-        <form action="/posts" method="POST">
-          <div class="mb-3">
-            <label for="author" class="form-label">Creator Name</label>
-            <input type="text" class="form-control" id="author" name="author" required>
+        <% if (user) { %>
+          <form action="/posts" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Creator Name</label>
+              <input type="text" class="form-control" value="<%= user.name %>" disabled>
+            </div>
+            <div class="mb-3">
+              <label for="title" class="form-label">Blog Title</label>
+              <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category" name="category" required>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat %>"><%= cat %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="content" class="form-label">Blog Content</label>
+              <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Publish Post</button>
+          </form>
+        <% } else { %>
+          <div class="text-center py-4">
+            <p class="text-muted">You must be signed in to create a new blog post.</p>
+            <a href="/signin" class="btn btn-primary btn-sm me-2">Sign In</a>
+            <a href="/signup" class="btn btn-success btn-sm">Sign Up</a>
           </div>
-          <div class="mb-3">
-            <label for="title" class="form-label">Blog Title</label>
-            <input type="text" class="form-control" id="title" name="title" required>
-          </div>
-          <div class="mb-3">
-            <label for="category" class="form-label">Category</label>
-            <select class="form-select" id="category" name="category" required>
-              <% categories.forEach(cat => { %>
-                <option value="<%= cat %>"><%= cat %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="content" class="form-label">Blog Content</label>
-            <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Publish Post</button>
-        </form>
+        <% } %>
       </div>
     </div>
   </div>
@@ -59,16 +67,18 @@
               <span class="badge bg-secondary"><%= post.category %></span>
             </div>
             <h6 class="card-subtitle mb-2 text-muted">
-              By <%= post.author %> | <small><%= post.createdAt %></small>
+              By <%= post.creator_name %> | <small><%= new Date(post.date_created).toLocaleString() %></small>
             </h6>
-            <p class="card-text"><%= post.content %></p>
+            <p class="card-text"><%= post.body %></p>
             
-            <div class="d-flex justify-content-end gap-2 border-top pt-2">
-              <a href="/posts/<%= post.id %>/edit" class="btn btn-sm btn-outline-warning">Edit</a>
-              <form action="/posts/<%= post.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this post?');">
-                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-              </form>
-            </div>
+            <% if (user && post.creator_user_id === user.user_id) { %>
+              <div class="d-flex justify-content-end gap-2 border-top pt-2">
+                <a href="/posts/<%= post.blog_id %>/edit" class="btn btn-sm btn-outline-warning">Edit</a>
+                <form action="/posts/<%= post.blog_id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this post?');">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+              </div>
+            <% } %>
           </div>
         </div>
       <% }) %>
